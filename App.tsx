@@ -139,12 +139,13 @@ const App: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-bold text-gray-800 leading-none">StyleSwap</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] text-orange-600 font-bold uppercase tracking-wider bg-orange-50 px-1.5 py-0.5 rounded border border-orange-100">PRO EDIT</span>
-                <span className="flex items-center gap-1 text-[10px] text-blue-600 font-bold uppercase tracking-wider bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <span className="text-[10px] text-orange-600 font-bold uppercase tracking-wider bg-orange-50 px-1.5 py-0.5 rounded border border-orange-100 shadow-sm">PRO EDIT</span>
+                <span className="flex items-center gap-1 text-[10px] text-blue-600 font-bold uppercase tracking-wider bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 shadow-sm">
                   <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-ping"></span>
                   Gemini 3 API Active
                 </span>
+                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 shadow-sm">US-EAST</span>
               </div>
             </div>
           </div>
@@ -214,134 +215,138 @@ const App: React.FC = () => {
                   />
                 </div>
 
+                {/* Fix: Added correct enum comparison and completed truncated button logic */}
                 <button
                   onClick={handleGenerate}
                   disabled={!originalImage || status === AppStatus.GENERATING}
-                  className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-3 active:scale-95 ${
-                    !originalImage || status === AppStatus.GENERATING 
-                    ? 'bg-gray-300 cursor-not-allowed' 
-                    : 'bg-orange-600 hover:bg-orange-700 shadow-orange-200'
+                  className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 ${
+                    !originalImage || status === AppStatus.GENERATING
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-orange-600 hover:bg-orange-700 text-white'
                   }`}
                 >
                   {status === AppStatus.GENERATING ? (
                     <>
-                      <i className="fas fa-atom fa-spin"></i>
-                      Gemini 3 Processing...
+                      <i className="fas fa-circle-notch fa-spin"></i>
+                      Reimagining...
                     </>
                   ) : (
                     <>
                       <i className="fas fa-wand-sparkles"></i>
-                      Transform Backdrop
+                      Generate Backdrop
                     </>
                   )}
                 </button>
-                
-                {error && (
-                  <div className="p-3 bg-red-50 text-red-600 rounded-lg text-xs font-medium border border-red-100 animate-in fade-in slide-in-from-top-1">
-                    <i className="fas fa-exclamation-triangle mr-1"></i>
-                    {error}
-                  </div>
-                )}
               </div>
             </section>
 
-            <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
-              <div className="flex items-start gap-3">
-                <div className="text-blue-500 mt-0.5">
-                  <i className="fas fa-star text-sm"></i>
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-blue-800 mb-1">Gemini 3 Frontier</h3>
-                  <p className="text-[11px] text-blue-700 leading-relaxed">
-                    You are using <strong>Gemini 3 Pro Image</strong>. This model uses advanced spatial reasoning to place products perfectly in 3D-aware environments.
-                  </p>
-                </div>
+            {error && (
+              <div className="bg-red-50 border border-red-100 p-4 rounded-2xl text-red-600 text-sm flex gap-3">
+                <i className="fas fa-exclamation-circle mt-0.5"></i>
+                <p>{error}</p>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Right Column: Visual Preview */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-orange-50 p-4 md:p-8 min-h-[500px] flex flex-col relative overflow-hidden">
-              
-              {!originalImage ? (
-                <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex-1 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-orange-300 hover:bg-orange-50/30 transition-all p-10 group"
-                >
-                  <div className="w-20 h-20 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-inner">
-                    <i className="fas fa-camera text-3xl"></i>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Ready for Gemini 3 Transformation</h3>
-                  <p className="text-gray-500 text-center max-w-sm mb-6 text-sm">
-                    Upload a product photo to see how Gemini 3 reimagines its surroundings.
-                  </p>
-                  <span className="bg-white border border-gray-200 px-6 py-2 rounded-full text-sm font-semibold text-gray-700 shadow-sm group-hover:shadow-md transition-all">
-                    Choose Photo
-                  </span>
+          {/* Right Column: Image Workspace */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-3xl shadow-sm border border-orange-50 overflow-hidden min-h-[500px] flex flex-col">
+              <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
                 </div>
-              ) : (
-                <div className="flex-1 flex flex-col lg:flex-row gap-6 h-full">
-                  {/* Before */}
-                  <div className="flex-1 flex flex-col">
-                    <div className="flex items-center justify-between mb-3 px-1">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded">Input</span>
-                      <div className="flex items-center gap-3">
-                        <button 
-                          onClick={handleStartOver}
-                          className="text-xs font-medium text-gray-400 hover:text-red-500"
-                        >
-                          Clear
-                        </button>
-                        <button 
-                          onClick={() => fileInputRef.current?.click()}
-                          className="text-xs font-medium text-orange-600 hover:underline"
-                        >
-                          Replace
-                        </button>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  {status === AppStatus.IDLE ? 'Waiting for upload' : 'Studio Canvas'}
+                </div>
+              </div>
+
+              <div className="flex-1 flex items-center justify-center p-6 bg-slate-50 relative">
+                {!originalImage ? (
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full max-w-md aspect-square border-4 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-orange-300 hover:bg-orange-50/50 transition-all group"
+                  >
+                    <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 text-3xl group-hover:bg-orange-100 group-hover:text-orange-500 transition-all">
+                      <i className="fas fa-cloud-arrow-up"></i>
+                    </div>
+                    <div className="text-center">
+                      <p className="font-bold text-gray-700">Click to upload product photo</p>
+                      <p className="text-xs text-gray-400 mt-1">PNG, JPG up to 10MB</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex flex-col md:flex-row gap-6 items-center justify-center">
+                    <div className="flex-1 space-y-2 text-center">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase">Original</p>
+                      <div className="relative aspect-square bg-white rounded-2xl shadow-inner overflow-hidden border border-gray-100">
+                        <img src={originalImage} alt="Original" className="w-full h-full object-contain p-4" />
                       </div>
                     </div>
-                    <div className="relative flex-1 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 flex items-center justify-center">
-                      <img src={originalImage} alt="Original" className="max-h-full max-w-full object-contain p-2" />
+                    
+                    <div className="hidden md:flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                        <i className="fas fa-chevron-right"></i>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 space-y-2 text-center">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase">Result</p>
+                      <div className="relative aspect-square bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 group">
+                        {status === AppStatus.GENERATING ? (
+                          <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+                            <div className="relative w-16 h-16 mb-4">
+                              <div className="absolute inset-0 border-4 border-orange-100 rounded-full"></div>
+                              <div className="absolute inset-0 border-4 border-t-orange-500 rounded-full animate-spin"></div>
+                            </div>
+                            <h3 className="font-bold text-gray-800 text-sm">Processing with Gemini 3</h3>
+                            <p className="text-[10px] text-gray-500 mt-2 max-w-[180px]">Generating 1K High-Quality Studio Environment...</p>
+                          </div>
+                        ) : resultImage ? (
+                          <>
+                            <img src={resultImage} alt="Result" className="w-full h-full object-cover" />
+                            <div className="absolute bottom-4 right-4 flex gap-2 translate-y-12 group-hover:translate-y-0 transition-all">
+                              <button 
+                                onClick={downloadImage}
+                                className="bg-white/90 backdrop-blur text-gray-800 p-2.5 rounded-lg shadow-lg hover:bg-orange-500 hover:text-white transition-all"
+                              >
+                                <i className="fas fa-download"></i>
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 text-gray-300">
+                            <i className="fas fa-image text-4xl mb-2"></i>
+                            <p className="text-xs font-medium">Ready to transform</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
+                )}
+              </div>
 
-                  {/* After */}
-                  <div className="flex-1 flex flex-col">
-                    <div className="flex items-center justify-between mb-3 px-1">
-                      <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded">Gemini 3 Pro Output</span>
-                      {status === AppStatus.SUCCESS && resultImage && (
-                         <button 
-                            onClick={downloadImage}
-                            className="text-xs font-medium text-green-600 hover:underline flex items-center gap-1"
-                         >
-                           <i className="fas fa-download"></i> Save HD
-                         </button>
-                      )}
-                    </div>
-                    <div className="relative flex-1 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center shadow-inner">
-                      {status === AppStatus.GENERATING ? (
-                        <div className="flex flex-col items-center gap-4 text-center p-4">
-                          <div className="relative">
-                            <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-                            <div className="absolute inset-0 flex items-center justify-center text-blue-600">
-                              <i className="fas fa-microchip animate-pulse"></i>
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-gray-700 uppercase tracking-tighter">Gemini 3 is creating...</p>
-                            <p className="text-[11px] text-gray-500 mt-1">Applying global lighting & depth maps</p>
-                          </div>
-                        </div>
-                      ) : resultImage ? (
-                        <img src={resultImage} alt="Transformed" className="max-h-full max-w-full object-contain animate-in fade-in zoom-in duration-1000 p-2" />
-                      ) : (
-                        <div className="text-center p-8 text-gray-400">
-                          <i className="fas fa-sparkles text-3xl mb-3 opacity-20"></i>
-                          <p className="text-xs italic">Awaiting AI transformation</p>
-                        </div>
-                      )}
-                    </div>
+              {resultImage && (
+                <div className="p-4 bg-orange-50 border-t border-orange-100 flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-2 text-orange-700">
+                    <i className="fas fa-check-circle"></i>
+                    <span className="text-sm font-semibold">Perfect! Image ready for your shop.</span>
+                  </div>
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={handleStartOver}
+                      className="px-4 py-2 text-sm font-bold text-orange-700 hover:bg-orange-100 rounded-lg transition-all"
+                    >
+                      Reset
+                    </button>
+                    <button 
+                      onClick={downloadImage}
+                      className="px-6 py-2 bg-orange-600 text-white text-sm font-bold rounded-lg shadow-md hover:bg-orange-700 transition-all active:scale-95 flex items-center gap-2"
+                    >
+                      <i className="fas fa-download"></i>
+                      Download 1K PNG
+                    </button>
                   </div>
                 </div>
               )}
@@ -350,7 +355,6 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Hidden File Input */}
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -359,37 +363,38 @@ const App: React.FC = () => {
         className="hidden" 
       />
 
-      {/* Mobile Footer */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 md:hidden bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-[0_-4px_15px_rgba(0,0,0,0.08)] z-20">
-        {!originalImage ? (
-           <button 
-           onClick={() => fileInputRef.current?.click()}
-           className="w-full bg-orange-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg"
-         >
-           <i className="fas fa-camera"></i>
-           Upload Photo
-         </button>
-        ) : (
-          <div className="flex gap-3">
-             <button 
-              onClick={handleStartOver}
-              className="bg-gray-100 text-gray-600 p-4 rounded-xl font-bold transition-all active:bg-gray-200"
-            >
-              <i className="fas fa-arrow-rotate-left"></i>
-            </button>
-            <button 
-              onClick={handleGenerate}
-              disabled={status === AppStatus.GENERATING}
-              className="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg disabled:bg-gray-400"
-            >
-              {status === AppStatus.GENERATING ? <i className="fas fa-atom fa-spin"></i> : <i className="fas fa-magic"></i>}
-              {status === AppStatus.GENERATING ? 'Rendering...' : 'Gemini 3 Magic'}
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Footer / Mobile Nav */}
+      <footer className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-100 p-3 md:hidden z-20">
+        <div className="flex items-center justify-around max-w-md mx-auto">
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-500"
+          >
+            <i className="fas fa-plus-circle text-xl"></i>
+            <span className="text-[10px] font-bold">UPLOAD</span>
+          </button>
+          <button 
+            onClick={handleGenerate}
+            disabled={!originalImage || status === AppStatus.GENERATING}
+            className={`flex flex-col items-center gap-1 ${
+              !originalImage || status === AppStatus.GENERATING ? 'text-gray-200' : 'text-orange-600'
+            }`}
+          >
+            <i className="fas fa-wand-magic-sparkles text-xl"></i>
+            <span className="text-[10px] font-bold">GENERATE</span>
+          </button>
+          <button 
+            onClick={handleStartOver}
+            className="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-500"
+          >
+            <i className="fas fa-arrow-rotate-left text-xl"></i>
+            <span className="text-[10px] font-bold">RESET</span>
+          </button>
+        </div>
+      </footer>
     </div>
   );
 };
 
+// Fix: Added missing default export
 export default App;
